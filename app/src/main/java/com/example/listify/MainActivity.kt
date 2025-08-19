@@ -46,21 +46,21 @@ import com.example.listify.ui.theme.ListifyTheme
 class MainActivity : ComponentActivity() {
     private lateinit var taskManager: TaskManager
     
-    // Permission request launcher for notifications (Android 13+)
+   
     private val notificationPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { isGranted ->
-        // Handle permission result if needed
+       
     }
     
-    // Permission request launcher for exact alarms (Android 12+)
+   
     private val exactAlarmPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        // Handle exact alarm permission result if needed
+       
     }
     
-    // Broadcast receiver for handling task deletion from notifications
+   
     private val deleteTaskReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             if (intent.action == "DELETE_TASK") {
@@ -74,18 +74,18 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         taskManager = TaskManager(this)
         
-        // Enable edge-to-edge display
+       
         WindowCompat.setDecorFitsSystemWindows(window, false)
         
-        // Request notification permission on Android 13+
+       
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
         
-        // Request exact alarm permission on Android 12+
+       
         requestExactAlarmPermission()
         
-        // Register broadcast receiver for task deletion
+       
         val filter = IntentFilter("DELETE_TASK")
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             registerReceiver(deleteTaskReceiver, filter, Context.RECEIVER_NOT_EXPORTED)
@@ -93,11 +93,11 @@ class MainActivity : ComponentActivity() {
             registerReceiver(deleteTaskReceiver, filter)
         }
         
-        // Uncomment the next line if you want to clear all tasks for testing
-        // taskManager.clearAllTasks()
+       
+       
         setContent {
             ListifyTheme {
-                // Apply window insets to ensure proper layout
+               
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -111,12 +111,12 @@ class MainActivity : ComponentActivity() {
     
     override fun onStart() {
         super.onStart()
-        // Set status bar icon visibility after the window is properly initialized
+       
         setStatusBarAppearance()
     }
     
     private fun setStatusBarAppearance() {
-        // Make status bar icons visible (dark icons on light background, light icons on dark background)
+       
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             window?.insetsController?.setSystemBarsAppearance(
                 WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS,
@@ -229,7 +229,7 @@ fun NavigationHost(taskManager: TaskManager) {
                 tasks = tasks,
                 onTaskDeleted = { task -> taskManager.removeTask(tasks, task) },
                 onCompleteTask = { task -> 
-                    // Find the task and update its completed status
+                   
                     val updatedTask = task.copy(isCompleted = true)
                     taskManager.updateTask(tasks, task, updatedTask)
                 }

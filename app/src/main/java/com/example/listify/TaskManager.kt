@@ -22,7 +22,7 @@ class TaskManager(context: Context) {
                 val taskList: List<Task> = gson.fromJson(jsonString, type)
                 tasks!!.addAll(taskList)
             } catch (e: Exception) {
-                // Handle parsing errors
+                
                 e.printStackTrace()
             }
         }
@@ -34,7 +34,7 @@ class TaskManager(context: Context) {
             val jsonString = gson.toJson(tasks)
             sharedPreferences.edit().putString("tasks", jsonString).apply()
         } catch (e: Exception) {
-            // Handle serialization errors
+            
             e.printStackTrace()
         }
     }
@@ -48,22 +48,22 @@ class TaskManager(context: Context) {
         
         tasks.add(task)
         saveTasks(tasks)
-        // Schedule notification for the new task
+        
         try {
             notificationService.scheduleNotification(task)
         } catch (e: Exception) {
-            // Handle notification scheduling errors
+            
             android.util.Log.e("TaskManager", "Error scheduling notification", e)
             e.printStackTrace()
         }
     }
     
     fun removeTask(tasks: SnapshotStateList<Task>, task: Task) {
-        // Cancel the notification before removing the task
+        
         try {
             notificationService.cancelNotification(task.notificationId)
         } catch (e: Exception) {
-            // Handle notification cancellation errors
+            
             e.printStackTrace()
         }
         tasks.remove(task)
@@ -78,7 +78,7 @@ class TaskManager(context: Context) {
                 removeTask(tasksList, taskToRemove)
             }
         } catch (e: Exception) {
-            // Handle task removal errors
+            
             e.printStackTrace()
         }
     }
@@ -88,20 +88,20 @@ class TaskManager(context: Context) {
             it.title == oldTask.title && it.deadlineDate == oldTask.deadlineDate 
         }
         if (index != -1) {
-            // Cancel the old notification
+            
             try {
                 notificationService.cancelNotification(oldTask.notificationId)
             } catch (e: Exception) {
-                // Handle notification cancellation errors
+                
                 e.printStackTrace()
             }
             tasks[index] = newTask
             saveTasks(tasks)
-            // Schedule new notification
+            
             try {
                 notificationService.scheduleNotification(newTask)
             } catch (e: Exception) {
-                // Handle notification scheduling errors
+                
                 e.printStackTrace()
             }
         }
@@ -109,14 +109,14 @@ class TaskManager(context: Context) {
     
     fun clearAllTasks() {
         try {
-            // Get all tasks to cancel their notifications
+            
             val allTasks = getTasks()
             for (task in allTasks) {
                 notificationService.cancelNotification(task.notificationId)
             }
             sharedPreferences.edit().putString("tasks", "[]").apply()
         } catch (e: Exception) {
-            // Handle clear tasks errors
+            
             e.printStackTrace()
         }
     }

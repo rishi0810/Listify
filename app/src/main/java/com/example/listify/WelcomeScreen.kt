@@ -42,7 +42,7 @@ fun WelcomeScreen(navController: NavController, onNavigateToHome: () -> Unit) {
     val context = LocalContext.current
     var isFirstTime by remember { mutableStateOf<Boolean?>(null) }
     
-    // Check if it's the first time the user opens the app
+    
     LaunchedEffect(Unit) {
         isFirstTime = context.isFirstTimeUser()
     }
@@ -60,13 +60,13 @@ fun WelcomeScreen(navController: NavController, onNavigateToHome: () -> Unit) {
                 .padding(32.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Top illustration section
+            
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f)
             ) {
-                // Using the illustration from resources
+                
                 Image(
                     painter = painterResource(id = com.example.listify.R.mipmap.welcome),
                     contentDescription = "Welcome Illustration",
@@ -79,7 +79,7 @@ fun WelcomeScreen(navController: NavController, onNavigateToHome: () -> Unit) {
 
             Spacer(modifier = Modifier.height(48.dp))
 
-            // Headline
+            
             Text(
                 text = "Welcome to Listify",
                 fontSize = 28.sp,
@@ -90,7 +90,7 @@ fun WelcomeScreen(navController: NavController, onNavigateToHome: () -> Unit) {
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            // Sub-headline
+            
             Text(
                 text = "Something I created for you to track your endless JIRA tickets",
                 fontSize = 16.sp,
@@ -100,21 +100,21 @@ fun WelcomeScreen(navController: NavController, onNavigateToHome: () -> Unit) {
 
             Spacer(modifier = Modifier.height(32.dp))
 
-            // Conditional content based on first time user
+            
             when (isFirstTime) {
                 true -> {
-                    // First time user - show "Let's Start" button
+                    
                     Button(
                         onClick = {
                             context.setFirstTimeUser(false)
-                            // Check if onboarding is already completed
+                            
                             if (context.isOnboardingCompleted()) {
-                                // Navigate directly to home if onboarding was completed
+                                
                                 navController.navigate("home") {
                                     popUpTo("welcome") { inclusive = true }
                                 }
                             } else {
-                                // Navigate to onboarding if not completed
+                                
                                 onNavigateToHome()
                             }
                         },
@@ -122,7 +122,7 @@ fun WelcomeScreen(navController: NavController, onNavigateToHome: () -> Unit) {
                             .fillMaxWidth()
                             .height(56.dp),
                         colors = ButtonDefaults.buttonColors(
-                            containerColor = Color(0xFF1C1C1E) // Dark background
+                            containerColor = Color(0xFF1C1C1E) 
                         )
                     ) {
                         Text(
@@ -134,23 +134,23 @@ fun WelcomeScreen(navController: NavController, onNavigateToHome: () -> Unit) {
                     }
                 }
                 false -> {
-                    // Returning user - show loading animation
+                    
                     CircularProgressIndicator(
                         modifier = Modifier.height(56.dp),
                         color = Color(0xFF1C1C1E)
                     )
                     
-                    // Navigate to home after a short delay
+                    
                     LaunchedEffect(Unit) {
-                        delay(3000) // short delay
-                        // Directly navigate to home for returning users
+                        delay(3000) 
+                        
                         navController.navigate("home") {
                             popUpTo("welcome") { inclusive = true }
                         }
                     }
                 }
                 null -> {
-                    // Loading state - show a simple loading indicator
+                    
                     CircularProgressIndicator(
                         modifier = Modifier.height(56.dp),
                         color = Color(0xFF1C1C1E)
@@ -163,7 +163,7 @@ fun WelcomeScreen(navController: NavController, onNavigateToHome: () -> Unit) {
     }
 }
 
-// Extension functions for SharedPreferences
+
 fun Context.isFirstTimeUser(): Boolean {
     val sharedPref = getSharedPreferences("user_prefs", Context.MODE_PRIVATE)
     return sharedPref.getBoolean("is_first_time", true)

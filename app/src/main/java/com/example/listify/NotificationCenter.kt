@@ -28,16 +28,16 @@ import java.time.format.DateTimeFormatter
 
 
 
-// Data class for notification records
+
 data class NotificationRecord(
     val id: Int,
     val taskId: Int,
     val taskTitle: String,
     val taskTime: String,
-    val triggeredAt: String, // Store as string to avoid Gson serialization issues
+    val triggeredAt: String, 
     val isCleared: Boolean = false
 ) {
-    // Helper method to get LocalDateTime
+    
     fun getTriggeredAt(): LocalDateTime {
         return try {
             LocalDateTime.parse(triggeredAt, DateTimeFormatter.ISO_LOCAL_DATE_TIME)
@@ -46,7 +46,7 @@ data class NotificationRecord(
         }
     }
     
-    // Helper method to create NotificationRecord with LocalDateTime
+    
     companion object {
         fun create(
             id: Int,
@@ -86,7 +86,7 @@ class NotificationManager(context: Context) {
 
     fun addNotification(notification: NotificationRecord) {
         val notifications = getNotifications()
-        notifications.add(0, notification) // Add to the beginning of the list
+        notifications.add(0, notification) 
         saveNotifications(notifications)
     }
 
@@ -128,7 +128,7 @@ fun NotificationCenterScreen(navController: NavController) {
     var loading by remember { mutableStateOf(true) }
     val scope = rememberCoroutineScope()
 
-    // Load notifications off the main thread to avoid Gson parsing on UI thread
+    
     LaunchedEffect(Unit) {
         val loaded = try {
             withContext(kotlinx.coroutines.Dispatchers.IO) {
@@ -158,7 +158,7 @@ fun NotificationCenterScreen(navController: NavController) {
     ) { innerPadding ->
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             if (loading) {
-                // Simple shimmer / progress indicator
+                
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
@@ -181,7 +181,7 @@ fun NotificationCenterScreen(navController: NavController) {
                     }
                 }
                 
-                // Clear All button at the bottom
+                
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

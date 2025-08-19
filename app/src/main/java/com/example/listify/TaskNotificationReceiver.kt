@@ -21,7 +21,7 @@ class TaskNotificationReceiver : BroadcastReceiver() {
         when (intent.action) {
             "TASK_DEADLINE" -> {
                 showTaskNotification(context, intent)
-                // Save notification to notification center
+                
                 saveNotificationToCenter(context, intent)
             }
             ACTION_CANCEL_TASK -> {
@@ -33,7 +33,7 @@ class TaskNotificationReceiver : BroadcastReceiver() {
     private fun showTaskNotification(context: Context, intent: Intent) {
         android.util.Log.d("TaskNotificationReceiver", "Received task deadline notification")
         
-        // Get task details from intent
+        
         val taskTitle = intent.getStringExtra("TASK_TITLE") ?: return
         val taskTime = intent.getStringExtra("TASK_TIME") ?: return
         val notificationId = intent.getIntExtra("TASK_NOTIFICATION_ID", 0)
@@ -42,7 +42,7 @@ class TaskNotificationReceiver : BroadcastReceiver() {
         android.util.Log.d("TaskNotificationReceiver", "Task time: $taskTime")
         android.util.Log.d("TaskNotificationReceiver", "Notification ID: $notificationId")
         
-        // Create intent for cancel action
+        
         val cancelIntent = Intent(context, TaskNotificationReceiver::class.java).apply {
             action = ACTION_CANCEL_TASK
             putExtra("TASK_NOTIFICATION_ID", notificationId)
@@ -55,9 +55,9 @@ class TaskNotificationReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
         
-        // Create the notification
+        
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-            .setSmallIcon(android.R.drawable.ic_dialog_info) // Using a standard icon for now
+            .setSmallIcon(android.R.drawable.ic_dialog_info) 
             .setContentTitle("Task Reminder")
             .setContentText("$taskTitle is due soon")
             .setStyle(NotificationCompat.BigTextStyle()
@@ -65,14 +65,14 @@ class TaskNotificationReceiver : BroadcastReceiver() {
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
             .addAction(
-                android.R.drawable.ic_menu_delete, // Using a standard icon for delete
+                android.R.drawable.ic_menu_delete, 
                 "Cancel Task",
                 cancelPendingIntent
             )
         
-        // Show the notification
+        
         with(NotificationManagerCompat.from(context)) {
-            // Check for permission first (Android 13+)
+            
             if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.TIRAMISU || 
                 context.checkSelfPermission(android.Manifest.permission.POST_NOTIFICATIONS) == PackageManager.PERMISSION_GRANTED) {
                 notify(notificationId, builder.build())
@@ -85,12 +85,12 @@ class TaskNotificationReceiver : BroadcastReceiver() {
 
     private fun saveNotificationToCenter(context: Context, intent: Intent) {
         try {
-            // Get task details from intent
+            
             val taskTitle = intent.getStringExtra("TASK_TITLE") ?: return
             val taskTime = intent.getStringExtra("TASK_TIME") ?: return
             val notificationId = intent.getIntExtra("TASK_NOTIFICATION_ID", 0)
             
-            // Create notification record
+            
             val notificationRecord = NotificationRecord.create(
                 id = System.currentTimeMillis().toInt(),
                 taskId = notificationId,
@@ -99,7 +99,7 @@ class TaskNotificationReceiver : BroadcastReceiver() {
                 triggeredAt = java.time.LocalDateTime.now()
             )
             
-            // Save to notification center
+            
             val notificationManager = NotificationManager(context)
             notificationManager.addNotification(notificationRecord)
             
@@ -115,12 +115,12 @@ class TaskNotificationReceiver : BroadcastReceiver() {
         val notificationId = intent.getIntExtra("TASK_NOTIFICATION_ID", 0)
         android.util.Log.d("TaskNotificationReceiver", "Canceling task with notification ID: $notificationId")
         
-        // Cancel the notification
+        
         with(NotificationManagerCompat.from(context)) {
             cancel(notificationId)
         }
         
-        // Send broadcast to main app to handle task deletion
+        
         val deleteIntent = Intent("DELETE_TASK").apply {
             putExtra("TASK_NOTIFICATION_ID", notificationId)
         }

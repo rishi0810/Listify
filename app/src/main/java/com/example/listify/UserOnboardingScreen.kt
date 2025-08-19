@@ -34,12 +34,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-// Data class to hold user profile information
+
 data class UserProfile(
     val name: String = "",
     val occupation: String = "",
     val avatarUri: String? = null,
-    val themeColor: Color = Color(0xFFF48FB1) // Default light pink
+    val themeColor: Color = Color.Black
 )
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,7 +48,7 @@ fun UserOnboardingScreen(navController: NavController) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     
-    // Load saved user profile if exists
+    
     var userProfile by remember { 
         mutableStateOf(context.getUserProfile() ?: UserProfile()) 
     }
@@ -58,43 +58,36 @@ fun UserOnboardingScreen(navController: NavController) {
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var selectedColor by remember { mutableStateOf(userProfile.themeColor) }
     
-    // Launcher for image picker
+    
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
             uri?.let {
                 try {
-                    // Persist read permission so URI remains accessible across restarts
+                    
                     val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
                     context.contentResolver.takePersistableUriPermission(it, takeFlags)
                 } catch (e: Exception) {
-                    // ignore if permission not needed or fails
+                    
                 }
-                // Use Coil to load the selected image via AsyncImage; just store the Uri
+                
                 selectedImageUri = it
             }
     }
     
-    // Predefined color options
+    
     val colorOptions = listOf(
-        Color(0xFFF48FB1), // Light Pink (default)
-        Color(0xFF64B5F6), // Light Blue
-        Color(0xFF81C784), // Light Green
-        Color(0xFFFFB74D), // Light Orange
-        Color(0xFFBA68C8), // Light Purple
-        Color(0xFFFF6B6B), // Light Red
-        Color(0xFF4DB6AC)  // Light Teal
+        Color(0xFFF48FB1), 
+        Color(0xFF64B5F6), 
+        Color(0xFF81C784), 
+        Color(0xFFFFB74D), 
+        Color(0xFFBA68C8), 
+        Color(0xFFFF6B6B), 
+        Color(0xFF4DB6AC)  
     )
     
     Scaffold(
         containerColor = Color.White,
-        topBar = {
-            TopAppBar(
-                title = { Text("Profile Setup", fontWeight = FontWeight.Bold) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Color.Transparent),
-                modifier = Modifier.fillMaxWidth()
-            )
-        },
         bottomBar = {
             Surface(
                 tonalElevation = 3.dp,
@@ -109,7 +102,7 @@ fun UserOnboardingScreen(navController: NavController) {
                 ) {
                     Button(
                         onClick = {
-                            // Save user profile
+                            
                             val avatarString = selectedImageUri?.toString() ?: userProfile.avatarUri
                             val profile = UserProfile(
                                 name = name,
@@ -119,10 +112,10 @@ fun UserOnboardingScreen(navController: NavController) {
                             )
                             context.saveUserProfile(profile)
 
-                            // Mark onboarding as completed
+                            
                             context.setOnboardingCompleted(true)
 
-                            // Navigate to home screen
+                            
                             navController.navigate("home") {
                                 popUpTo("welcome") { inclusive = true }
                             }
@@ -151,7 +144,7 @@ fun UserOnboardingScreen(navController: NavController) {
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // Scrollable content
+            
             Column(
                 modifier = Modifier
                     .weight(1f)
@@ -165,7 +158,7 @@ fun UserOnboardingScreen(navController: NavController) {
                     modifier = Modifier.padding(bottom = 32.dp)
                 )
 
-                // Avatar Selection
+                
                 SectionHeader("Profile Picture")
                 Box(
                     modifier = Modifier
@@ -214,7 +207,7 @@ fun UserOnboardingScreen(navController: NavController) {
                     modifier = Modifier.padding(top = 8.dp, bottom = 24.dp)
                 )
 
-                // Name Input
+                
                 SectionHeader("Your Name")
                 OutlinedTextField(
                     value = name,
@@ -234,7 +227,7 @@ fun UserOnboardingScreen(navController: NavController) {
                     )
                 )
 
-                // Occupation Input
+                
                 SectionHeader("Occupation")
                 OutlinedTextField(
                     value = occupation,
@@ -254,7 +247,7 @@ fun UserOnboardingScreen(navController: NavController) {
                     )
                 )
 
-                // Theme Color Selection
+                
                 SectionHeader("Theme Color")
                 Text(
                     text = "Choose your favorite color",
@@ -297,10 +290,10 @@ fun UserOnboardingScreen(navController: NavController) {
     }
 }
 
-// Helper function to convert URI to Bitmap
-// Note: image decoding and caching is handled by Coil (AsyncImage). No custom uri->Bitmap helper required.
 
-// Extension functions for SharedPreferences
+
+
+
 fun Context.getUserProfile(): UserProfile? {
     val sharedPref = getSharedPreferences("user_profile", Context.MODE_PRIVATE)
     val name = sharedPref.getString("name", null) ?: return null
@@ -308,17 +301,17 @@ fun Context.getUserProfile(): UserProfile? {
     val avatarUri = sharedPref.getString("avatar_uri", null)
     val themeColorHash = sharedPref.getInt("theme_color", Color(0xFFF48FB1).hashCode())
     
-    // For simplicity, we'll just return the default color
-    // In a real app, you might want to store the ARGB values separately
+    
+    
     val themeColor = when (themeColorHash) {
-        Color(0xFFF48FB1).hashCode() -> Color(0xFFF48FB1) // Light Pink
-        Color(0xFF64B5F6).hashCode() -> Color(0xFF64B5F6) // Light Blue
-        Color(0xFF81C784).hashCode() -> Color(0xFF81C784) // Light Green
-        Color(0xFFFFB74D).hashCode() -> Color(0xFFFFB74D) // Light Orange
-        Color(0xFFBA68C8).hashCode() -> Color(0xFFBA68C8) // Light Purple
-        Color(0xFFFF6B6B).hashCode() -> Color(0xFFFF6B6B) // Light Red
-        Color(0xFF4DB6AC).hashCode() -> Color(0xFF4DB6AC) // Light Teal
-        else -> Color(0xFFF48FB1) // Default to light pink
+        Color(0xFFF48FB1).hashCode() -> Color(0xFFF48FB1) 
+        Color(0xFF64B5F6).hashCode() -> Color(0xFF64B5F6) 
+        Color(0xFF81C784).hashCode() -> Color(0xFF81C784) 
+        Color(0xFFFFB74D).hashCode() -> Color(0xFFFFB74D) 
+        Color(0xFFBA68C8).hashCode() -> Color(0xFFBA68C8) 
+        Color(0xFFFF6B6B).hashCode() -> Color(0xFFFF6B6B) 
+        Color(0xFF4DB6AC).hashCode() -> Color(0xFF4DB6AC) 
+        else -> Color(0xFFF48FB1) 
     }
     
     return UserProfile(
@@ -335,18 +328,18 @@ fun Context.saveUserProfile(profile: UserProfile) {
         putString("name", profile.name)
         putString("occupation", profile.occupation)
         putString("avatar_uri", profile.avatarUri)
-        putInt("theme_color", profile.themeColor.hashCode()) // Using hashCode instead of toArgb
+        putInt("theme_color", profile.themeColor.hashCode()) 
         apply()
     }
 }
 
-// Helper function to get user's theme color
+
 fun getUserThemeColor(context: Context): Color {
     val userProfile = context.getUserProfile()
-    return userProfile?.themeColor ?: Color(0xFFF48FB1) // Default to light pink if not set
+    return userProfile?.themeColor ?: Color(0xFFF48FB1) 
 }
 
-// Extension functions for onboarding completion tracking
+
 fun Context.isOnboardingCompleted(): Boolean {
     val sharedPref = getSharedPreferences("onboarding_prefs", Context.MODE_PRIVATE)
     return sharedPref.getBoolean("is_onboarding_completed", false)

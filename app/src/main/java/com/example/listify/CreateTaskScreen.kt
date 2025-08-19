@@ -32,11 +32,6 @@ import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-// Helper function to get user's theme color
-// fun getUserThemeColor(context: Context): Color {
-//     val userProfile = context.getUserProfile()
-//     return userProfile?.themeColor ?: Color(0xFFF48FB1) // Default to light pink if not set
-// }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +42,7 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
     var startTime by remember { mutableStateOf<LocalTime?>(null) }
     var endTime by remember { mutableStateOf<LocalTime?>(null) }
     var description by remember { mutableStateOf("") }
-    var hasDuration by remember { mutableStateOf(false) } // New state for duration checkbox
+    var hasDuration by remember { mutableStateOf(false) } 
     var taskNameError by remember { mutableStateOf(false) }
     var categoryError by remember { mutableStateOf(false) }
     var dateError by remember { mutableStateOf(false) }
@@ -99,13 +94,13 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
                     if (taskNameError) Text("Task name is required", color = MaterialTheme.colorScheme.error)
                 },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = getUserThemeColor(LocalContext.current), // User's theme color
-                    focusedLabelColor = getUserThemeColor(LocalContext.current) // User's theme color
+                    focusedBorderColor = getUserThemeColor(LocalContext.current), 
+                    focusedLabelColor = getUserThemeColor(LocalContext.current) 
                 )
             )
 
             SectionHeader("Category")
-            // Using a Column with wrapped Row elements to simulate FlowRow behavior
+            
             Column(
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -114,7 +109,7 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
                 var currentRow = mutableListOf<String>()
                 
                 categories.forEach { category ->
-                    // Add to current row if it has less than 3 items, otherwise start a new row
+                    
                     if (currentRow.size < 3) {
                         currentRow.add(category)
                     } else {
@@ -123,12 +118,12 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
                         currentRow.add(category)
                     }
                 }
-                // Add the last row if it has items
+                
                 if (currentRow.isNotEmpty()) {
                     rows.add(currentRow)
                 }
                 
-                // Display each row
+                
                 rows.forEach { rowCategories ->
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -143,13 +138,13 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
                                 },
                                 label = { Text(category) },
                                 colors = FilterChipDefaults.filterChipColors(
-                                    selectedContainerColor = getUserThemeColor(LocalContext.current), // User's theme color
+                                    selectedContainerColor = getUserThemeColor(LocalContext.current), 
                                     selectedLabelColor = Color.White
                                 )
                             )
                         }
                     }
-                    // Add spacing between rows
+                    
                     Spacer(modifier = Modifier.height(8.dp))
                 }
             }
@@ -195,11 +190,11 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
                     disabledBorderColor = MaterialTheme.colorScheme.outline,
                     disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                     disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                    // Add focused colors to match the user's theme color
-                    focusedBorderColor = getUserThemeColor(LocalContext.current), // User's theme color
-                    focusedLeadingIconColor = getUserThemeColor(LocalContext.current), // User's theme color
-                    focusedTrailingIconColor = getUserThemeColor(LocalContext.current), // User's theme color
-                    focusedLabelColor = getUserThemeColor(LocalContext.current) // User's theme color
+                    
+                    focusedBorderColor = getUserThemeColor(LocalContext.current), 
+                    focusedLeadingIconColor = getUserThemeColor(LocalContext.current), 
+                    focusedTrailingIconColor = getUserThemeColor(LocalContext.current), 
+                    focusedLabelColor = getUserThemeColor(LocalContext.current) 
                 )
             )
 
@@ -219,7 +214,7 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
             }
 
             if (hasDuration) {
-                // Show start and end time pickers when duration is enabled
+                
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -250,7 +245,7 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
                     }
                 }
             } else {
-                // Show single time picker when duration is disabled
+                
                 SectionHeader("Time")
                 TimePickerField(
                     time = endTime,
@@ -271,8 +266,8 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
                 modifier = Modifier.fillMaxWidth().height(120.dp),
                 placeholder = { Text("Add more details...") },
                 colors = OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = getUserThemeColor(LocalContext.current), // User's theme color
-                    focusedLabelColor = getUserThemeColor(LocalContext.current) // User's theme color
+                    focusedBorderColor = getUserThemeColor(LocalContext.current), 
+                    focusedLabelColor = getUserThemeColor(LocalContext.current) 
                 )
             )
 
@@ -285,7 +280,7 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
                     categoryError = selectedCategory.isBlank()
                     dateError = selectedDate == null
                     
-                    // Validate time fields based on duration setting
+                    
                     if (hasDuration) {
                         timeError = startTime == null || endTime == null
                     } else {
@@ -294,14 +289,14 @@ fun CreateTaskScreen(navController: NavController, onTaskCreated: (Task) -> Unit
 
                     if (taskNameError || categoryError || dateError || timeError) return@Button
 
-                    // Format time display based on duration setting
+                    
                     val timeRange = if (hasDuration && startTime != null && endTime != null) {
                         "${startTime?.format(DateTimeFormatter.ofPattern("hh:mm a"))} - ${endTime?.format(DateTimeFormatter.ofPattern("hh:mm a"))}"
                     } else {
                         endTime!!.format(DateTimeFormatter.ofPattern("hh:mm a"))
                     }
 
-                    // Determine which time to use for notification (start time if duration, end time if not)
+                    
                     val notificationTime = if (hasDuration && startTime != null) {
                         startTime!!.format(DateTimeFormatter.ofPattern("HH:mm"))
                     } else {
@@ -352,7 +347,7 @@ fun TimePickerField(
                         { _, hour, minute -> onTimeSelected(LocalTime.of(hour, minute)) },
                         calendar.get(Calendar.HOUR_OF_DAY),
                         calendar.get(Calendar.MINUTE),
-                        true // is24HourFormat
+                        true 
                     ).show()
                 },
             enabled = false,
@@ -365,11 +360,11 @@ fun TimePickerField(
                 disabledBorderColor = MaterialTheme.colorScheme.outline,
                 disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
                 disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-                // Add focused colors to match the user's theme color
-                focusedBorderColor = getUserThemeColor(LocalContext.current), // User's theme color
-                focusedLeadingIconColor = getUserThemeColor(LocalContext.current), // User's theme color
-                focusedTrailingIconColor = getUserThemeColor(LocalContext.current), // User's theme color
-                focusedLabelColor = getUserThemeColor(LocalContext.current) // User's theme color
+                
+                focusedBorderColor = getUserThemeColor(LocalContext.current), 
+                focusedLeadingIconColor = getUserThemeColor(LocalContext.current), 
+                focusedTrailingIconColor = getUserThemeColor(LocalContext.current), 
+                focusedLabelColor = getUserThemeColor(LocalContext.current) 
             ),
             textStyle = androidx.compose.ui.text.TextStyle(textAlign = TextAlign.Left),
             isError = isError,
@@ -389,11 +384,11 @@ fun clickableTextFieldColors() = OutlinedTextFieldDefaults.colors(
     disabledBorderColor = MaterialTheme.colorScheme.outline,
     disabledPlaceholderColor = MaterialTheme.colorScheme.onSurfaceVariant,
     disabledTrailingIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
-    // Add focused colors to match the user's theme color
-    focusedBorderColor = getUserThemeColor(LocalContext.current), // User's theme color
-    focusedLeadingIconColor = getUserThemeColor(LocalContext.current), // User's theme color
-    focusedTrailingIconColor = getUserThemeColor(LocalContext.current), // User's theme color
-    focusedLabelColor = getUserThemeColor(LocalContext.current) // User's theme color
+    
+    focusedBorderColor = getUserThemeColor(LocalContext.current), 
+    focusedLeadingIconColor = getUserThemeColor(LocalContext.current), 
+    focusedTrailingIconColor = getUserThemeColor(LocalContext.current), 
+    focusedLabelColor = getUserThemeColor(LocalContext.current) 
 )
 
 @Composable

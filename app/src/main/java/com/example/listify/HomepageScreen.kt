@@ -48,7 +48,7 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 
-// Data class with notification support
+
 data class Task(
     val title: String,
     val time: String,
@@ -57,23 +57,23 @@ data class Task(
     val deadlineTime: String = "14:30",
     val description: String = "Complete the project requirements and submit for review.",
     val isCompleted: Boolean = false,
-    val startTime: String? = null,  // Optional start time (for duration-based tasks)
-    val notificationId: Int = 0  // Unique ID for notification
+    val startTime: String? = null,  
+    val notificationId: Int = 0  
 )
 
-// Primary accent color (defined once)
-val primaryAccentColor = Color(0xFFF48FB1) // Light pink - will be overridden by user's theme color
+
+val primaryAccentColor = Color(0xFFF48FB1) 
 
 
 
-// ✨ NEW: A custom slide-in drawer composable
+
 @Composable
 fun SideDrawer(
     isOpen: Boolean,
     navController: NavController,
     onClose: () -> Unit
 ) {
-    // Animate the drawer's horizontal offset
+    
     val drawerWidth = 240.dp
     val drawerOffset by animateDpAsState(
         targetValue = if (isOpen) 0.dp else -drawerWidth,
@@ -81,7 +81,7 @@ fun SideDrawer(
         label = "drawerOffset"
     )
 
-    // A semi-transparent scrim that covers the main content when the drawer is open
+    
     if (isOpen) {
         Box(
             modifier = Modifier
@@ -95,7 +95,7 @@ fun SideDrawer(
         )
     }
 
-    // The drawer itself
+    
     Surface(
         modifier = Modifier
             .fillMaxHeight()
@@ -107,21 +107,21 @@ fun SideDrawer(
         Column(
             modifier = Modifier
                 .padding(16.dp)
-                .padding(top = 48.dp) // Add extra top padding to avoid notch/status bar
+                .padding(top = 48.dp) 
         ) {
             val context = LocalContext.current
             val userProfile = context.getUserProfile() ?: UserProfile()
             
-            // Header Section
+            
             Row(
                 verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                // Profile Info (Left Side)
+                
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    // Using user's avatar or a colored box as a placeholder
+                    
                     if (userProfile.avatarUri != null) {
                         AsyncImage(
                             model = userProfile.avatarUri,
@@ -132,7 +132,7 @@ fun SideDrawer(
                             contentScale = ContentScale.Crop
                         )
                     } else {
-                        // Default colored box if no avatar is set
+                        
                         Box(
                             modifier = Modifier
                                 .size(64.dp)
@@ -142,7 +142,7 @@ fun SideDrawer(
                     }
                     Spacer(Modifier.width(16.dp))
                     Column(
-                        modifier = Modifier.weight(1f) // This will prevent text from colliding with the close button
+                        modifier = Modifier.weight(1f) 
                     ) {
                         Text(
                             userProfile.name.ifEmpty { "Sophia Rose" },
@@ -162,19 +162,19 @@ fun SideDrawer(
                         )
                     }
                 }
-                // Spacer and Close Button (Right Side)
-                Spacer(Modifier.weight(0.1f)) // Reduced weight to prevent excessive spacing
+                
+                Spacer(Modifier.weight(0.1f)) 
                 IconButton(onClick = { onClose() }) {
                     Icon(Icons.Default.Close, contentDescription = "Close")
                 }
             }
             
-            // Separator
+            
             Spacer(Modifier.height(24.dp))
             HorizontalDivider(color = Color.LightGray.copy(alpha = 0.5f))
             Spacer(Modifier.height(16.dp))
             
-            // Navigation Items
+            
             val navItems = listOf(
                 "Home" to Icons.Default.Home,
                 "Exercise" to Icons.Default.FitnessCenter,
@@ -193,7 +193,7 @@ fun SideDrawer(
                                 onClose()
                             }
                             "Settings" -> {
-                                // TODO: Implement settings navigation
+                                
                                 onClose()
                             }
                         }
@@ -256,7 +256,7 @@ fun ProgressSummaryCard(tasks: List<Task>) {
                 Text("$totalTasks Tasks", color = Color.White.copy(alpha = 0.8f), fontSize = 14.sp)
                 Spacer(modifier = Modifier.height(12.dp))
                 
-                // Show completed tasks count
+                
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -280,7 +280,7 @@ fun ProgressSummaryCard(tasks: List<Task>) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     LinearProgressIndicator(
-                        // ✨ FIX: progress parameter expects a Float, not a lambda
+                        
                         progress = progress,
                         modifier = Modifier
                             .weight(1f)
@@ -297,14 +297,14 @@ fun ProgressSummaryCard(tasks: List<Task>) {
     }
 }
 
-// ... (getIconForCategory, ExpandedDetailRow, TaskItem, parseDate, parseTime are unchanged)
+
 @Composable
 fun getIconForCategory(category: String): ImageVector {
     return when (category.lowercase()) {
         "meeting" -> Icons.Filled.People
         "jira" -> Icons.Filled.Description
-        "lunch" -> Icons.Filled.Fastfood // A better icon for lunch
-        "Sync-Up" -> Icons.Filled.People // Corrected casing
+        "lunch" -> Icons.Filled.Fastfood 
+        "Sync-Up" -> Icons.Filled.People 
         "personal" -> Icons.Filled.Person
         else -> Icons.Filled.Description
     }
@@ -357,7 +357,7 @@ fun TaskItem(task: Task, onDelete: (Task) -> Unit, onComplete: (Task) -> Unit) {
     SwipeToDismissBox(
         state = dismissState,
         enableDismissFromStartToEnd = true,
-        enableDismissFromEndToStart = !task.isCompleted, // Only allow completing if not already completed
+        enableDismissFromEndToStart = !task.isCompleted, 
         backgroundContent = {
             val color by animateColorAsState(
                 when (dismissState.targetValue) {
@@ -451,7 +451,7 @@ fun TaskItem(task: Task, onDelete: (Task) -> Unit, onComplete: (Task) -> Unit) {
                                 textDecoration = if (task.isCompleted) TextDecoration.LineThrough else TextDecoration.None
                             )
                         )
-                        // Add a hint for completed tasks that they can still be deleted
+                        
                         if (task.isCompleted) {
                             Spacer(modifier = Modifier.height(4.dp))
                             Row(
@@ -486,7 +486,7 @@ fun TaskItem(task: Task, onDelete: (Task) -> Unit, onComplete: (Task) -> Unit) {
                     HorizontalDivider(color = Color(0xFFEEEEEE))
                     Spacer(modifier = Modifier.height(16.dp))
                     
-                    // Show a completion indicator for completed tasks
+                    
                     if (task.isCompleted) {
                         Row(
                             modifier = Modifier
@@ -578,7 +578,7 @@ fun SwipeTutorialOverlay(onDismiss: () -> Unit) {
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Demonstration of swipe right (delete)
+                
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -606,7 +606,7 @@ fun SwipeTutorialOverlay(onDismiss: () -> Unit) {
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                // Demonstration of swipe left (complete)
+                
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -641,11 +641,11 @@ fun SwipeTutorialOverlay(onDismiss: () -> Unit) {
 fun HomepageScreen(navController: NavController, tasks: List<Task>, onTaskDeleted: (Task) -> Unit, onCompleteTask: (Task) -> Unit) {
     val context = LocalContext.current
     val userThemeColor = getUserThemeColor(context)
-    // ✨ CHANGE: State to control our custom drawer
+    
     var isDrawerOpen by remember { mutableStateOf(false) }
     var showSwipeTutorial by remember { mutableStateOf(context.isFirstTimeWithSwipe()) }
 
-    // ✨ CHANGE: The whole screen is wrapped in a Box to allow the drawer and tutorial to overlay it
+    
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
             containerColor = Color(0xFFF9F9F9),
@@ -653,7 +653,7 @@ fun HomepageScreen(navController: NavController, tasks: List<Task>, onTaskDelete
                 TopAppBar(
                     title = { Text("Homepage", fontWeight = FontWeight.Bold, fontSize = 20.sp) },
                     navigationIcon = {
-                        // ✨ CHANGE: This button now opens our custom drawer
+                        
                         IconButton(onClick = { isDrawerOpen = true }) {
                             Icon(Icons.Filled.Menu, contentDescription = "Menu")
                         }
@@ -709,14 +709,14 @@ fun HomepageScreen(navController: NavController, tasks: List<Task>, onTaskDelete
             }
         }
 
-        // ✨ CHANGE: Our custom drawer is placed here, on top of the Scaffold
+        
         SideDrawer(
             isOpen = isDrawerOpen,
             navController = navController,
             onClose = { isDrawerOpen = false }
         )
         
-        // Show swipe tutorial for first-time users
+        
         if (showSwipeTutorial) {
             SwipeTutorialOverlay(
                 onDismiss = {
