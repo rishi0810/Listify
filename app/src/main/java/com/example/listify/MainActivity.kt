@@ -20,6 +20,8 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
@@ -150,36 +152,56 @@ fun NavGraphBuilder.animatedComposable(
     composable(
         route = route,
         enterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { fullWidth -> fullWidth },
-                animationSpec = tween(300)
-            ) + fadeIn(
-                animationSpec = tween(300)
-            )
+            if (route == "create-task") {
+                slideInVertically(
+                    initialOffsetY = { fullHeight -> fullHeight },
+                    animationSpec = tween(300)
+                ) + fadeIn(animationSpec = tween(300))
+            } else {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(300)
+                ) + fadeIn(animationSpec = tween(300))
+            }
         },
         exitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { fullWidth -> -fullWidth / 4 },
-                animationSpec = tween(300)
-            ) + fadeOut(
-                animationSpec = tween(300)
-            )
+            if (route == "create-task") {
+                slideOutVertically(
+                    targetOffsetY = { fullHeight -> fullHeight },
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
+            } else {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> -fullWidth / 4 },
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
+            }
         },
         popEnterTransition = {
-            slideInHorizontally(
-                initialOffsetX = { fullWidth -> -fullWidth / 4 },
-                animationSpec = tween(300)
-            ) + fadeIn(
-                animationSpec = tween(300)
-            )
+            if (route == "create-task") {
+                slideInVertically(
+                    initialOffsetY = { fullHeight -> -fullHeight / 4 },
+                    animationSpec = tween(300)
+                ) + fadeIn(animationSpec = tween(300))
+            } else {
+                slideInHorizontally(
+                    initialOffsetX = { fullWidth -> -fullWidth / 4 },
+                    animationSpec = tween(300)
+                ) + fadeIn(animationSpec = tween(300))
+            }
         },
         popExitTransition = {
-            slideOutHorizontally(
-                targetOffsetX = { fullWidth -> fullWidth },
-                animationSpec = tween(300)
-            ) + fadeOut(
-                animationSpec = tween(300)
-            )
+            if (route == "create-task") {
+                slideOutVertically(
+                    targetOffsetY = { fullHeight -> fullHeight },
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
+            } else {
+                slideOutHorizontally(
+                    targetOffsetX = { fullWidth -> fullWidth },
+                    animationSpec = tween(300)
+                ) + fadeOut(animationSpec = tween(300))
+            }
         },
         content = content
     )

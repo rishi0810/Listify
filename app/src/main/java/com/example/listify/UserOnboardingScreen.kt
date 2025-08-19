@@ -1,7 +1,6 @@
 package com.example.listify
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.content.Intent
@@ -57,44 +56,23 @@ fun UserOnboardingScreen(navController: NavController) {
     var name by remember { mutableStateOf(userProfile.name) }
     var occupation by remember { mutableStateOf(userProfile.occupation) }
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-    var bitmap by remember { mutableStateOf<Bitmap?>(null) }
     var selectedColor by remember { mutableStateOf(userProfile.themeColor) }
     
     // Launcher for image picker
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
-        uri?.let {
-            try {
-                // Persist read permission so URI remains accessible across restarts
-                val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
-                context.contentResolver.takePersistableUriPermission(it, takeFlags)
-            } catch (e: Exception) {
-                // ignore if permission not needed or fails
-            }
-            selectedImageUri = it
-            // Decode off main thread and cache
-            val uriString = it.toString()
-            val cached = BitmapCache.get(uriString)
-            if (cached != null) {
-                bitmap = cached
-            } else {
-                // Launch a coroutine to decode and cache off main thread
-                coroutineScope.launch {
-                    val decoded = try {
-                        withContext(Dispatchers.IO) {
-                            uriToBitmap(context, it)
-                        }
-                    } catch (e: Exception) {
-                        null
-                    }
-                    if (decoded != null) {
-                        BitmapCache.put(uriString, decoded)
-                        bitmap = decoded
-                    }
+            uri?.let {
+                try {
+                    // Persist read permission so URI remains accessible across restarts
+                    val takeFlags = Intent.FLAG_GRANT_READ_URI_PERMISSION
+                    context.contentResolver.takePersistableUriPermission(it, takeFlags)
+                } catch (e: Exception) {
+                    // ignore if permission not needed or fails
                 }
+                // Use Coil to load the selected image via AsyncImage; just store the Uri
+                selectedImageUri = it
             }
-        }
     }
     
     // Predefined color options
@@ -320,20 +298,7 @@ fun UserOnboardingScreen(navController: NavController) {
 }
 
 // Helper function to convert URI to Bitmap
-fun uriToBitmap(context: Context, uri: Uri): Bitmap? {
-    return try {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            val source = ImageDecoder.createSource(context.contentResolver, uri)
-            ImageDecoder.decodeBitmap(source)
-        } else {
-            @Suppress("DEPRECATION")
-            MediaStore.Images.Media.getBitmap(context.contentResolver, uri)
-        }
-    } catch (e: Exception) {
-        e.printStackTrace()
-        null
-    }
-}
+// Note: image decoding and caching is handled by Coil (AsyncImage). No custom uri->Bitmap helper required.
 
 // Extension functions for SharedPreferences
 fun Context.getUserProfile(): UserProfile? {
